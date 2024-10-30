@@ -1,13 +1,20 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 const button = document.querySelector('#runButton');
+const popup = document.querySelector('.popup');
+const result = document.querySelector('.result');
+const scoreResult = document.querySelector('.score');
+const livesResult = document.querySelector('.lives');
+const buttonResults = document.querySelector('#results');
+const popupResults = document.querySelector('.popup-results');
+const buttonRestart = document.querySelector('.restart');
 
 let x = canvas.width / 2;
 let y = canvas.height - 30;
 const ballRadius = 10;
 
 const paddleHeight = 10;
-const paddleWidth = 75;
+const paddleWidth = 275;
 let paddleX = (canvas.width - paddleWidth) / 2;
 
 let rightPressed = false;
@@ -18,7 +25,7 @@ let dx = 2;
 let dy = -2;
 
 const brickRowCount = 3;
-const brickColumnCount = 5;
+const brickColumnCount = 7;
 const brickWidth = 75;
 const brickHeight = 20;
 const brickPadding = 10;
@@ -36,6 +43,10 @@ for (let c = 0; c < brickColumnCount; c++) {
 let score = 0;
 let lives = 3;
 
+let gameOver = false;
+const bestResult = document.querySelector('.best-result');
+const bestScore = JSON.parse(localStorage.getItem('bestScore')) || [];
+
 document.addEventListener('keydown', keyDownHandler, false);
 document.addEventListener('keyup', keyUpHandler, false);
 document.addEventListener('mousemove', mouseMoveHandler, false);
@@ -49,6 +60,7 @@ function drawBall() {
 }
 
 function draw() {
+  if (gameOver) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBricks();
   drawBall();
@@ -60,9 +72,6 @@ function draw() {
   if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
     dx = -dx;
   }
-  //   if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
-  //     dy = -dy;
-  //   }
   if (y + dy < ballRadius) {
     dy = -dy;
   } else if (y + dy > canvas.height - ballRadius) {
@@ -71,9 +80,12 @@ function draw() {
     } else {
       lives--;
       if (!lives) {
-        alert('GAME OVER');
-        document.location.reload();
-        // clearInterval(interval);
+        gameOver = true;
+        popup.style.display = 'flex';
+        result.textContent = 'GAME OVER';
+        scoreResult.textContent = `SCORE: ${score}`;
+        livesResult.textContent = `LIVES: ${lives}`;
+        saveLocalStorage();
       } else {
         x = canvas.width / 2;
         y = canvas.height - 30;
@@ -94,12 +106,6 @@ function draw() {
   }
   requestAnimationFrame(draw);
 }
-
-// function startGame() {
-// //   setInterval(draw, 10);
-
-//     interval = setInterval(draw, 10);
-// }
 
 function keyDownHandler(e) {
   if (e.key === 'Right' || e.key === 'ArrowRight') {
@@ -132,9 +138,13 @@ function collisionDetection() {
           b.status = 0;
           score++;
           if (score === brickRowCount * brickColumnCount) {
-            alert('YOU WIN, CONGRATULATIONS!');
-            document.location.reload();
-            clearInterval(interval); // Needed for Chrome to end game
+            gameOver = true;
+            popup.style.display = 'flex';
+            result.textContent = 'YOU WIN, CONGRATULATIONS!';
+            scoreResult.textContent = `SCORE: ${score}`;
+            livesResult.textContent = `LIVES: ${lives}`;
+            saveLocalStorage();
+            clearInterval(interval);
           }
         }
       }
@@ -144,7 +154,6 @@ function collisionDetection() {
 
 button.addEventListener('click', function () {
   draw();
-  //   startGame();
   this.disabled = true;
 });
 
@@ -192,3 +201,35 @@ function drawLives() {
   ctx.fillStyle = '#0095DD';
   ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
 }
+
+function saveLocalStorage() {
+  bestScore.push(score);
+  bestScore.sort((a, b) => b - a);
+  slicedArray = bestScore.slice(0, 10);
+  localStorage.setItem('bestScore', JSON.stringify(slicedArray));
+}
+
+buttonResults.addEventListener('click', function () {
+  const storedArray = JSON.parse(localStorage.getItem('bestScore'));
+  popupResults.style.display = 'flex';
+  popupResults.innerHTML = '';
+  const title = document.createElement('p');
+  title.classList.add('results-text');
+  title.textContent = `Results:`;
+  popupResults.append(title);
+  storedArray.forEach((element, index) => {
+    const text = document.createElement('p');
+    text.classList.add('results-text');
+    text.textContent = `${index + 1}: ${element}`;
+    popupResults.append(text);
+  });
+});
+
+popupResults.addEventListener('click', function () {
+  popupResults.style.display = 'none';
+});
+
+buttonRestart.addEventListener('click', function () {
+  popup.style.display = 'none';
+  document.location.reload();
+});

@@ -8,8 +8,20 @@
     <title>Breakout</title>
   </head>
   <body>
-    <canvas id="myCanvas" width="480" height="320"></canvas>
-    <button id="runButton">Start game</button>
+    <canvas id="myCanvas" width="650" height="470"></canvas>
+    <div id="button-wrapper">
+      <button id="runButton">Start game</button>
+      <button id="results">Results</button>
+    </div>
+    <div class="popup">
+      <div class="result-wrapper">
+        <h3 class="result"></h3>
+        <p class="score"></p>
+        <p class="lives"></p>
+        <button class="restart">Restart</button>
+      </div>
+    </div>
+    <div class="popup-results"></div>
     <script src="index.js"></script>
   </body>
 </html>

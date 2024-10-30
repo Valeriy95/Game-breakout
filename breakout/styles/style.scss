@@ -3,12 +3,79 @@
   margin: 0;
 }
 
+body {
+  background: #379683;
+}
+
 canvas {
-  background: #eee;
+  background: #5dcb95;
   display: block;
   margin: 0 auto;
+  margin-top: 30px;
+  border: 3px solid #05386b;
+  box-shadow: 0 0 35px rgba(5, 56, 107, 0.5);
+}
+
+#button-wrapper {
+  display: flex;
+  width: 70%;
+  margin: auto;
 }
 
 button {
   display: block;
+  background-color: #05386b;
+  color: #edf5e1;
+  height: 50px;
+  width: 100px;
+  border: 2px solid #05386b;
+  border-radius: 10px;
+  margin: auto;
+  margin-top: 30px;
+  transition: 0.5s;
+}
+
+button:hover {
+  cursor: pointer;
+  transition: 0.5s;
+  background: #5dcb95;
+  border-color: #5dcb95;
+  color: #05386b;
+}
+
+.popup,
+.popup-results {
+  display: none;
+  position: fixed;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  opacity: 0.9;
+}
+
+.popup-results {
+  flex-direction: column;
+}
+
+.popup-results:hover {
+  cursor: pointer;
+}
+
+.score,
+.lives,
+.result,
+.results-text {
+  color: #edf5e1;
+  padding: 10px 0px;
+  text-align: center;
+  font-size: 30px;
+}
+
+.results-text {
+  font-size: 30px;
+  padding: 10px 0px;
+  font-weight: 700;
 }
